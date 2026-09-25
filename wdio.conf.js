@@ -33,8 +33,8 @@ exports.config = {
 
   logLevel: 'error',
   bail: 0,
-  waitforTimeout: 15000,
-  connectionRetryTimeout: 120000,
+  waitforTimeout: 30000,
+  connectionRetryTimeout: 180000,
   connectionRetryCount: 3,
 
   services: [
@@ -83,7 +83,7 @@ exports.config = {
     source: true,
     strict: false,
     tagExpression: '',
-    timeout: 120000,
+    timeout: 300000,
     ignoreUndefinedDefinitions: false,
   },
 };
