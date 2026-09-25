@@ -17,8 +17,20 @@ AfterAll(async () => {
   console.log('=== BStackBank Test Suite Complete ===');
 });
 
-Before(async (scenario) => {
+Before(async function (scenario) {
   console.log(`\n▶ Starting: ${scenario.pickle.name}`);
+
+  // // Extract tags matching @TCID_ or @TC- for BrowserStack test case mapping
+  // const tcTags = scenario.pickle.tags
+  //   .filter(tag => tag.name.startsWith('@TCID_') || tag.name.startsWith('@TC-'))
+  //   .map(tag => tag.name.replace('@TCID_', '').replace('@', ''));
+  // if (tcTags.length > 0) {
+  //   const tcidValue = tcTags.join(', ');
+  //   // 'ID' is the primary key required by BrowserStack Test Management
+  //   await browser.setCustomTags('ID', tcidValue);
+  //   await browser.setCustomTags('test_case_id', tcidValue);
+  //   console.log(`\n▶ Setting Custom Tags: ${tcTags}`);
+  // }
 });
 
 After(async (scenario) => {
@@ -55,13 +67,14 @@ async function acceptNotificationPermission() {
 }
 
 /**
- * Handle biometric — wait for the system PASS/FAIL dialog (requires enableBiometric: true
- * in bstack:options), then send PASS via the BrowserStack executor.
+ * Handle biometric — behaviour depends on ENABLE_BIOMETRIC env var:
+ *   - ENABLE_BIOMETRIC=true  → wait for BrowserStack biometric dialog and send PASS via executor
+ *   - ENABLE_BIOMETRIC=false → tap "Skip this step" to bypass biometric screen
  *
- * Correct payload per BrowserStack docs:
- *   {"action":"biometric", "arguments": {"biometricMatch": "pass"}}
+ * Requires enableBiometric: true in bstack:options when ENABLE_BIOMETRIC=true.
  */
 async function handleBiometricDialog() {
+  const biometricEnabled = process.env.ENABLE_BIOMETRIC === 'true';
   try {
     await driver.waitUntil(
       async () => {
@@ -70,8 +83,18 @@ async function handleBiometricDialog() {
       },
       { timeout: 12000, timeoutMsg: 'Biometric screen did not appear' }
     );
-    await driver.execute('browserstack_executor: {"action":"biometric", "arguments": {"biometricMatch": "pass"}}');
-    console.log('[Hook] Biometric PASS sent via BrowserStack executor');
+
+    if (biometricEnabled) {
+      // Use BrowserStack executor to simulate biometric PASS
+      await driver.execute('browserstack_executor: {"action":"biometric", "arguments": {"biometricMatch": "pass"}}');
+      console.log('[Hook] Biometric PASS sent via BrowserStack executor');
+    } else {
+      // Skip biometric — tap "Skip this step" button
+      const Skip = await driver.$('-android uiautomator:new UiSelector().text("Skip this step")');
+      await Skip.waitForDisplayed({ timeout: 80000 });
+      await Skip.click();
+      console.log('[Hook] Biometric skipped via "Skip this step" button');
+    }
   } catch {
     // No biometric screen — continue
   }

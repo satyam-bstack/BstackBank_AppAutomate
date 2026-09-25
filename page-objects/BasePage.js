@@ -77,12 +77,7 @@ class BasePage {
     if (platform === 'ios') {
       await driver.execute('mobile: scroll', { direction: 'down' });
     } else {
-      await driver.action('pointer')
-        .move({ duration: 0, x: 540, y: 1600 })
-        .down({ button: 0 })
-        .move({ duration: 600, x: 540, y: 400 })
-        .up({ button: 0 })
-        .perform();
+      await $('android=new UiScrollable(new UiSelector().scrollable(true)).scrollForward()');
     }
   }
 
@@ -94,12 +89,7 @@ class BasePage {
     if (platform === 'ios') {
       await driver.execute('mobile: scroll', { direction: 'up' });
     } else {
-      await driver.action('pointer')
-        .move({ duration: 0, x: 540, y: 400 })
-        .down({ button: 0 })
-        .move({ duration: 600, x: 540, y: 1600 })
-        .up({ button: 0 })
-        .perform();
+      await $('android=new UiScrollable(new UiSelector().scrollable(true)).scrollBackward()');
     }
   }
 

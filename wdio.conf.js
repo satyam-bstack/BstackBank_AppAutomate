@@ -31,19 +31,50 @@ exports.config = {
 
   capabilities: [platform === 'ios' ? capabilities.ios : capabilities.android],
 
-  logLevel: 'info',
+  logLevel: 'error',
   bail: 0,
   waitforTimeout: 15000,
   connectionRetryTimeout: 120000,
   connectionRetryCount: 3,
 
-  services: ['browserstack'],
+  services: [
+    [
+      'browserstack',
+      {
+        testObservability: true,
+        testManagement: true,
+        //accessibility: true,
+        buildIdentifier: '${BUILD_NUMBER}',
+        browserstackLocal: false,
+        // accessibilityOptions: {
+        //   screenReaderAutomation: {
+        //     autoReport: true,
+        //     // linearNavigation: true,
+        //     // linearNavigationTimeout: 300000,
+        //   },
+        //   wcagVersion: 'wcag22aa',
+        //   includeIssueType: {
+        //     bestPractice: false,
+        //   },
+        //   scannerProcessingTimeout: 10,
+        // },
+      }
+    ]
+  ],
 
   framework: 'cucumber',
-  reporters: ['spec'],
+  reporters: [
+    'spec',
+    ['cucumberjs-json', {
+      jsonFolder: './reports/cucumber-json/',
+      language: 'en',
+    }]
+  ],
 
   cucumberOpts: {
-    require: ['./step-definitions/**/*.js'],
+    require: [
+      './step-definitions/**/*.js',
+    ],
     backtrace: false,
     requireModule: [],
     dryRun: false,

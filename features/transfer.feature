@@ -8,7 +8,7 @@ Feature: Money Transfer
     Given I am on the home dashboard
 
   @transfer-success
-  Scenario: Successful money transfer to a recipient
+  Scenario: Successful money transfer to a recipient TC-15952
     When I navigate to the Transfer screen
     And I select recipient "Aditya"
     And I enter transfer amount "100"
@@ -18,8 +18,8 @@ Feature: Money Transfer
     Then I should see the transfer success modal
     And I tap the Done button
 
-  @transfer-quick-amount
-  Scenario: Transfer using a quick-amount chip
+  @transfer-quick-amount 
+  Scenario: Transfer using a quick-amount chip TC-15953
     When I navigate to the Transfer screen
     And I select recipient "Aditya"
     And I tap the quick amount "$100"
@@ -30,7 +30,7 @@ Feature: Money Transfer
     And I tap the Done button
 
   @transfer-with-remarks
-  Scenario: Transfer with optional remarks
+  Scenario: Transfer with optional remarks TC-15954
     When I navigate to the Transfer screen
     And I select recipient "Aditya"
     And I enter transfer amount "50"
@@ -42,7 +42,7 @@ Feature: Money Transfer
     And I tap the Done button
 
   @transfer-cancel-auth
-  Scenario: Cancel transaction during authorization
+  Scenario: Cancel transaction during authorization TC-15955
     When I navigate to the Transfer screen
     And I select recipient "Aditya"
     And I enter transfer amount "100"

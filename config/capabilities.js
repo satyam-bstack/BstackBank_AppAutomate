@@ -11,9 +11,9 @@ const bstackOptions = (buildSuffix, sessionName) => ({
   projectName: 'BStackBank Automation',
   buildName: `BStackBank ${buildSuffix} - ${new Date().toISOString().split('T')[0]}`,
   sessionName,
-  debug: true,
-  networkLogs: true,
-  deviceLogs: true,
+  debug: false,
+  networkLogs: process.env.ENABLE_NETWORK_LOGS !== 'false',
+  deviceLogs: process.env.ENABLE_DEVICE_LOGS === 'true',
   appiumLogs: false,
 });
 
@@ -28,7 +28,7 @@ const capabilities = {
     'appium:newCommandTimeout': 300,
     'bstack:options': {
       ...bstackOptions('Android', 'BStackBank Android Test'),
-      enableBiometric: true,
+      ...(process.env.ENABLE_BIOMETRIC === 'true' && { enableBiometric: true }),
     },
   },
 

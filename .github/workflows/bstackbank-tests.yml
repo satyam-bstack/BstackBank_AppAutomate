@@ -1,0 +1,102 @@
+name: BStackBank Mobile Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: 'Test scenario to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - login
+          - transfer
+          - transactions
+          - smoke
+          - regression
+      platform:
+        description: 'Target platform'
+        required: true
+        default: 'android'
+        type: choice
+        options:
+          - android
+          - ios
+      enable_biometric:
+        description: 'Enable Biometric authentication (requires BrowserStack biometric capability)'
+        required: false
+        default: false
+        type: boolean
+      enable_network_logs:
+        description: 'Enable Network Logs'
+        required: false
+        default: true
+        type: boolean
+      enable_device_logs:
+        description: 'Enable Device Logs'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  run-tests:
+    name: Run ${{ inputs.scenario }} tests on ${{ inputs.platform }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set tag expression
+        id: tag
+        run: |
+          SCENARIO="${{ inputs.scenario }}"
+          if [ "$SCENARIO" = "all" ]; then
+            echo "tag_expr=" >> $GITHUB_OUTPUT
+          else
+            echo "tag_expr=@${SCENARIO}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run BStackBank tests on BrowserStack
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+          BS_APP_ID: ${{ secrets.BS_APP_ID }}
+          PLATFORM: ${{ inputs.platform }}
+          ENABLE_BIOMETRIC: ${{ inputs.enable_biometric }}
+          ENABLE_NETWORK_LOGS: ${{ inputs.enable_network_logs }}
+          ENABLE_DEVICE_LOGS: ${{ inputs.enable_device_logs }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          TAG_EXPR="${{ steps.tag.outputs.tag_expr }}"
+          if [ -z "$TAG_EXPR" ]; then
+            npx wdio run wdio.conf.js
+          else
+            npx wdio run wdio.conf.js --cucumberOpts.tagExpression="$TAG_EXPR"
+          fi
+
+      - name: Upload Cucumber JSON reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-json-reports-${{ inputs.scenario }}-${{ inputs.platform }}
+          path: reports/cucumber-json/
+          retention-days: 30
+
+      - name: Upload failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-screenshots-${{ inputs.scenario }}-${{ inputs.platform }}
+          path: reports/screenshots/
+          retention-days: 7

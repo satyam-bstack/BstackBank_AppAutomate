@@ -68,11 +68,13 @@ class TransferPage extends BasePage {
   }
 
   async enterRemarks(note) {
+    await this.scrollDown();
     await this.typeText('android=new UiSelector().resourceId("remarks-input")', note);
   }
 
   async tapSendButton() {
     await this.hideKeyboard();
+    await this.scrollDown();
     await this.tap('android=new UiSelector().resourceId("send-btn")');
   }
 
