@@ -42,6 +42,9 @@ exports.config = {
       'browserstack',
       {
         testObservability: true,
+        testObservabilityOptions: {
+          buildTag: process.env.BUILD_TAGS ? JSON.parse(process.env.BUILD_TAGS) : [],
+        },
         testManagement: true,
         //accessibility: true,
         buildIdentifier: '${BUILD_NUMBER}',

@@ -14,7 +14,7 @@ on:
           - transfer
           - transactions
           - smoke
-          - regression
+          - regressionbrows
       platform:
         description: 'Target platform'
         required: true
@@ -57,15 +57,27 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Set tag expression
+      - name: Set tag expression and build tags
         id: tag
         run: |
           SCENARIO="${{ inputs.scenario }}"
+          PLATFORM="${{ inputs.platform }}"
+          BIOMETRIC="${{ inputs.enable_biometric }}"
+
+          # Cucumber tag expression
           if [ "$SCENARIO" = "all" ]; then
             echo "tag_expr=" >> $GITHUB_OUTPUT
           else
             echo "tag_expr=@${SCENARIO}" >> $GITHUB_OUTPUT
           fi
+
+          # Build tags for BrowserStack Test Reporting & Analytics
+          BIOMETRIC_TAG="biometric-off"
+          if [ "$BIOMETRIC" = "true" ]; then
+            BIOMETRIC_TAG="biometric-on"
+          fi
+          BUILD_TAGS='["'"$SCENARIO"'","'"$PLATFORM"'","'"$BIOMETRIC_TAG"'","build-${{ github.run_number }}","branch-${{ github.ref_name }}"]'
+          echo "build_tags=$BUILD_TAGS" >> $GITHUB_OUTPUT
 
       - name: Run BStackBank tests on BrowserStack
         env:
@@ -76,6 +88,7 @@ jobs:
           ENABLE_BIOMETRIC: ${{ inputs.enable_biometric }}
           ENABLE_NETWORK_LOGS: ${{ inputs.enable_network_logs }}
           ENABLE_DEVICE_LOGS: ${{ inputs.enable_device_logs }}
+          BUILD_TAGS: ${{ steps.tag.outputs.build_tags }}
           BUILD_NUMBER: ${{ github.run_number }}
         run: |
           TAG_EXPR="${{ steps.tag.outputs.tag_expr }}"
