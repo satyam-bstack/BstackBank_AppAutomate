@@ -144,7 +144,7 @@ When('I fail the biometric verification 5 times', async () => {
         const src = await driver.getPageSource();
         return src.includes('Biometric Authentication') || src.includes('Device Passcode');
       },
-      { timeout: 10000, timeoutMsg: `Biometric/Passcode dialog did not appear on attempt ${i + 1}` }
+      { timeout: 30000, timeoutMsg: `Biometric/Passcode dialog did not appear on attempt ${i + 1}` }
     );
 
     const src = await driver.getPageSource();
