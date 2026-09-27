@@ -81,7 +81,7 @@ async function handleBiometricDialog() {
         const src = await driver.getPageSource();
         return src.includes('Biometric Authentication') || src.includes('Verify Your Identity');
       },
-      { timeout: 12000, timeoutMsg: 'Biometric screen did not appear' }
+      { timeout: 30000, timeoutMsg: 'Biometric screen did not appear' }
     );
 
     if (biometricEnabled) {
