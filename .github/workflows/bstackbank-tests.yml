@@ -14,7 +14,7 @@ on:
           - transfer
           - transactions
           - smoke
-          - regressionbrows
+          - regression
       platform:
         description: 'Target platform'
         required: true
