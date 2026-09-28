@@ -98,6 +98,15 @@ jobs:
             npx wdio run wdio.conf.js --cucumberOpts.tagExpression="$TAG_EXPR"
           fi
 
+      - name: BrowserStack Build Report
+        if: always()
+        uses: browserstack/github-actions/browserstack-report-action@master
+        with:
+          username: ${{ secrets.BROWSERSTACK_USERNAME }}
+          access-key: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+          build-name: BStackBank ${{ inputs.scenario }} - ${{ inputs.platform }}
+          report-timeout: 2000
+
       - name: Upload Cucumber JSON reports
         if: always()
         uses: actions/upload-artifact@v4
