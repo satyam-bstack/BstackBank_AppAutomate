@@ -9,7 +9,7 @@ const bstackOptions = (buildSuffix, sessionName) => ({
   userName: process.env.BROWSERSTACK_USERNAME,
   accessKey: process.env.BROWSERSTACK_ACCESS_KEY,
   projectName: 'BStackBank Automation',
-  buildName: process.env.BROWSERSTACK_BUILD_NAME || `BStackBank ${buildSuffix} - ${new Date().toISOString().split('T')[0]}`,
+  buildName: process.env.BROWSERSTACK_BUILD_NAME || `BStackBank Automation`,
   sessionName,
   debug: false,
   networkLogs: process.env.ENABLE_NETWORK_LOGS !== 'false',

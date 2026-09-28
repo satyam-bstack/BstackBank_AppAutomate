@@ -90,7 +90,7 @@ jobs:
           ENABLE_DEVICE_LOGS: ${{ inputs.enable_device_logs }}
           BUILD_TAGS: ${{ steps.tag.outputs.build_tags }}
           BUILD_NUMBER: ${{ github.run_number }}
-          BROWSERSTACK_BUILD_NAME: BStackBank Automation
+          BROWSERSTACK_BUILD_NAME: BStackBank Automation #${{ github.run_number }}
         run: |
           TAG_EXPR="${{ steps.tag.outputs.tag_expr }}"
           if [ -z "$TAG_EXPR" ]; then
@@ -105,8 +105,8 @@ jobs:
         with:
           username: ${{ secrets.BROWSERSTACK_USERNAME }}
           access-key: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
-          build-name: BStackBank Automation
-          report-timeout: 200
+          build-name: BStackBank Automation #${{ github.run_number }}
+          report-timeout: 120
 
       - name: Upload Cucumber JSON reports
         if: always()
