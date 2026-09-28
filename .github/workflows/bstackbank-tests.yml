@@ -106,7 +106,7 @@ jobs:
           username: ${{ secrets.BROWSERSTACK_USERNAME }}
           access-key: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
           build-name: BStackBank Automation
-          report-timeout: 2000
+          report-timeout: 200
 
       - name: Upload Cucumber JSON reports
         if: always()
