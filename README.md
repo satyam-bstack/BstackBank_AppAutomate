@@ -149,6 +149,40 @@ After each run, the workflow uploads:
 
 ---
 
+## Accessibility & Visual Testing
+
+Both are opt-in and off by default.
+
+### App Accessibility
+Set `ENABLE_ACCESSIBILITY=true` (optionally `WCAG_VERSION=wcag21aa|wcag21aaa|wcag22aa|wcag22aaa`). Every UI change is scanned automatically; results appear in the BrowserStack Accessibility dashboard.
+
+```bash
+npm run test:a11y
+```
+
+### App Percy (visual testing)
+Follows the [App Percy WebdriverIO guide](https://www.browserstack.com/docs/app-percy/appium/getting-started/javascript/webdriverio-js/integrate-your-tests): the suite runs through `percy app:exec` (`@percy/cli`) and screenshots are taken with `percyScreenshot` (`@percy/appium-app`). Set `ENABLE_PERCY=true` and provide `PERCY_TOKEN` (App Percy project token, in `.env` locally / GitHub secret `PERCY_TOKEN` in CI).
+
+```bash
+npm run test:visual
+npm run test:a11y:visual   # both together
+```
+
+Snapshots are taken via the helper in `page-objects/VisualHelper.js`. To cover a new screen, add one line in the step definition where the screen is reached:
+
+```js
+const { snapshot } = require('../page-objects/VisualHelper');
+...
+await snapshot('Cards Screen');
+```
+
+Each unique snapshot name is captured **only once per session**, so repeated visits to a screen across scenarios don't create duplicate snapshots. The helper is a no-op when `ENABLE_PERCY` is not `true`.
+
+### CI
+The workflow adds inputs `enable_accessibility`, `wcag_version` and `enable_percy`. Add `PERCY_TOKEN` to the GitHub secrets.
+
+---
+
 ## Test Case Mapping (BrowserStack Test Management)
 
 Each scenario is tagged with `@TCID_TC-XXXXX` which maps to an existing test case in BrowserStack Test Management. The `cucumberjs-json` reporter generates a BDD JSON report after each run, and `testManagement: true` in the BrowserStack service config uploads results to the correct TC IDs automatically.

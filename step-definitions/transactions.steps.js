@@ -1,6 +1,7 @@
 const { When, Then } = require('@wdio/cucumber-framework');
 const transactionsPage = require('../page-objects/TransactionsPage');
 const homePage = require('../page-objects/HomePage');
+const { snapshot } = require('../page-objects/VisualHelper');
 
 /**
  * Transactions Step Definitions
@@ -13,6 +14,7 @@ const homePage = require('../page-objects/HomePage');
 When('I navigate to the Transactions screen', async () => {
   await homePage.navigateToTransactions();
   await transactionsPage.waitForTransactionsScreen();
+  await snapshot('Transactions Screen');
 });
 
 Then('I should see the Transactions screen', async () => {

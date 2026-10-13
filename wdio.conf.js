@@ -7,6 +7,8 @@ dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
 const BS_USER = process.env.BROWSERSTACK_USERNAME;
 const BS_KEY = process.env.BROWSERSTACK_ACCESS_KEY;
 const platform = process.env.PLATFORM || 'android';
+const ENABLE_ACCESSIBILITY = process.env.ENABLE_ACCESSIBILITY === 'true';
+const ENABLE_PERCY = process.env.ENABLE_PERCY === 'true';
 
 if (!BS_USER || !BS_KEY) {
   throw new Error('BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY must be set in .env or environment');
@@ -46,21 +48,18 @@ exports.config = {
           buildTag: process.env.BUILD_TAGS ? JSON.parse(process.env.BUILD_TAGS) : [],
         },
         testManagement: true,
-        //accessibility: true,
         buildIdentifier: '${BUILD_NUMBER}',
         browserstackLocal: false,
-        // accessibilityOptions: {
-        //   screenReaderAutomation: {
-        //     autoReport: true,
-        //     // linearNavigation: true,
-        //     // linearNavigationTimeout: 300000,
-        //   },
-        //   wcagVersion: 'wcag22aa',
-        //   includeIssueType: {
-        //     bestPractice: false,
-        //   },
-        //   scannerProcessingTimeout: 10,
-        // },
+        // App Accessibility — toggled via ENABLE_ACCESSIBILITY=true
+        accessibility: ENABLE_ACCESSIBILITY,
+        ...(ENABLE_ACCESSIBILITY && {
+          accessibilityOptions: {
+            wcagVersion: process.env.WCAG_VERSION || 'wcag21aa',
+            includeIssueType: {
+              bestPractice: true,
+            },
+          },
+        }),
       }
     ]
   ],
