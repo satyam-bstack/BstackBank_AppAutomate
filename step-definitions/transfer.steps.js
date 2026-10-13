@@ -2,6 +2,7 @@ const { When, Then } = require('@wdio/cucumber-framework');
 const transferPage = require('../page-objects/TransferPage');
 const homePage = require('../page-objects/HomePage');
 const { handleBiometricDialog } = require('./hooks');
+const { snapshot } = require('../page-objects/VisualHelper');
 
 /**
  * Transfer Step Definitions
@@ -29,6 +30,7 @@ When('I navigate to the Transfer screen', async () => {
   } catch {
     // Already at top or label not found — continue
   }
+  await snapshot('Transfer Screen');
 });
 
 When('I select recipient {string}', async (name) => {
@@ -62,6 +64,7 @@ Then('I should see the transaction authorization screen', async () => {
   await transferPage.waitForAuthSheet();
   const isDisplayed = await transferPage.isAuthSheetDisplayed();
   expect(isDisplayed).toBe(true);
+  await snapshot('Transaction Authorization Sheet');
 });
 
 When('I authenticate the transaction', async () => {
@@ -73,6 +76,7 @@ Then('I should see the transfer success modal', async () => {
   await transferPage.waitForSuccessModal();
   const isSuccessful = await transferPage.isTransferSuccessful();
   expect(isSuccessful).toBe(true);
+  await snapshot('Transfer Success Modal');
 });
 
 When('I tap the Done button', async () => {

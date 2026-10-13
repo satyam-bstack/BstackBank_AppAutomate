@@ -1,6 +1,7 @@
 const { Given, When, Then } = require('@wdio/cucumber-framework');
 const loginPage = require('../page-objects/LoginPage');
 const homePage = require('../page-objects/HomePage');
+const { snapshot } = require('../page-objects/VisualHelper');
 const {
   acceptNotificationPermission,
   handleBiometricDialog,
@@ -73,6 +74,7 @@ Given('the BStackBank app is launched', async () => {
     },
     { timeout: 60000, timeoutMsg: 'Login screen did not appear within 60 seconds' }
   );
+  await snapshot('Login Screen');
 });
 
 /**
@@ -171,6 +173,7 @@ Then('I should see the device passcode dialog', async () => {
   );
   const src = await driver.getPageSource();
   expect(src).toContain('Device Passcode');
+  await snapshot('Device Passcode Dialog');
 });
 
 When('I cancel the passcode dialog', async () => {
@@ -214,6 +217,7 @@ Then('I should see the home dashboard', async () => {
   );
   const isDisplayed = await homePage.isDashboardDisplayed();
   expect(isDisplayed).toBe(true);
+  await snapshot('Home Dashboard');
 });
 
 When('I tap the show password button', async () => {
