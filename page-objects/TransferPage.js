@@ -41,6 +41,33 @@ class TransferPage extends BasePage {
     await this.tap(`android=new UiSelector().descriptionContains("${name}")`);
   }
 
+  /**
+   * Select the first available recipient in the list and remember its name.
+   * Recipient rows share the resource-id prefix "recipient-" (UUID suffix is dynamic).
+   * Row content-desc format: "<initials>, <Full Name>, ****<last4>".
+   * Fails with a clear message when the list is empty (the app exposes no
+   * add-recipient control on the Transfer screen).
+   * @returns {Promise<string>} The selected recipient's display name
+   */
+  async selectFirstRecipient() {
+    const rowsSelector = 'android=new UiSelector().descriptionContains(", ****")';
+    await driver.waitUntil(
+      async () => (await $$(rowsSelector)).length > 0,
+      {
+        timeout: 10000,
+        timeoutMsg: 'No recipients available on the Transfer screen and the app has no add-recipient option',
+      }
+    );
+    const rows = await $$(rowsSelector);
+    const first = rows[0];
+    const desc = await first.getAttribute('content-desc');
+    // "PM, Priyans Mehta, ****4df4" -> "Priyans Mehta"
+    const name = desc.split(',')[1].trim();
+    await first.click();
+    this.selectedRecipientName = name;
+    return name;
+  }
+
   // ─── Amount form ──────────────────────────────────────────────────────────
 
   get amountInput() {
