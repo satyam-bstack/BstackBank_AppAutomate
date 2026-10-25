@@ -49,6 +49,16 @@ When('I tap the All filter', async () => {
   await transactionsPage.tapFilterAll();
 });
 
+Then('I should see the selected recipient in the transaction list', async function () {
+  const name = this.selectedRecipient || global.selectedRecipient;
+  expect(name).toBeTruthy();
+  await driver.waitUntil(
+    async () => transactionsPage.isRecipientTransactionVisible(name),
+    { timeout: 10000, timeoutMsg: `Transaction for "${name}" did not appear in the list` }
+  );
+  expect(await transactionsPage.isRecipientTransactionVisible(name)).toBe(true);
+});
+
 Then('I should see {string} in the transaction list', async (name) => {
   await driver.waitUntil(
     async () => transactionsPage.isRecipientTransactionVisible(name),

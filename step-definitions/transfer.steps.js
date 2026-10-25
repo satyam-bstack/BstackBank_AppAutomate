@@ -37,6 +37,13 @@ When('I select recipient {string}', async (name) => {
   await transferPage.selectRecipientByName(name);
 });
 
+When('I select the first available recipient', async function () {
+  // Pick the first recipient in the list; remember the name on the World so
+  // later steps (e.g. transaction history check) can reuse it.
+  this.selectedRecipient = await transferPage.selectFirstRecipient();
+  global.selectedRecipient = this.selectedRecipient;
+});
+
 When('I enter transfer amount {string}', async (amount) => {
   // Scroll amount-input into view using UiScrollable, then type
   const amountInput = await $('android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().resourceId("amount-input"))');

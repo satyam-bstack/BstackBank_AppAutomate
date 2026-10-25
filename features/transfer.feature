@@ -10,7 +10,7 @@ Feature: Money Transfer
   @transfer-success
   Scenario: Successful money transfer to a recipient TC-15952
     When I navigate to the Transfer screen
-    And I select recipient "Aditya"
+    And I select the first available recipient
     And I enter transfer amount "100"
     And I tap the Send Money button
     Then I should see the transaction authorization screen
@@ -21,7 +21,7 @@ Feature: Money Transfer
   @transfer-quick-amount 
   Scenario: Transfer using a quick-amount chip TC-15953
     When I navigate to the Transfer screen
-    And I select recipient "Aditya"
+    And I select the first available recipient
     And I tap the quick amount "$100"
     And I tap the Send Money button
     Then I should see the transaction authorization screen
@@ -32,7 +32,7 @@ Feature: Money Transfer
   @transfer-with-remarks
   Scenario: Transfer with optional remarks TC-15954
     When I navigate to the Transfer screen
-    And I select recipient "Aditya"
+    And I select the first available recipient
     And I enter transfer amount "50"
     And I enter transfer remarks "Lunch split"
     And I tap the Send Money button
@@ -44,7 +44,7 @@ Feature: Money Transfer
   @transfer-cancel-auth
   Scenario: Cancel transaction during authorization TC-15955
     When I navigate to the Transfer screen
-    And I select recipient "Aditya"
+    And I select the first available recipient
     And I enter transfer amount "100"
     And I tap the Send Money button
     Then I should see the transaction authorization screen

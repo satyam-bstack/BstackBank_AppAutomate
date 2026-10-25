@@ -34,7 +34,7 @@ Feature: Transaction History
   @transactions-after-transfer
   Scenario: Verify new transfer appears in transaction history TC-15951
     When I navigate to the Transfer screen
-    And I select recipient "Aditya"
+    And I select the first available recipient
     And I enter transfer amount "100"
     And I tap the Send Money button
     Then I should see the transaction authorization screen
@@ -43,4 +43,4 @@ Feature: Transaction History
     And I tap the Done button
     When I navigate to the Transactions screen
     Then I should see the Transactions screen
-    And I should see "Aditya" in the transaction list
+    And I should see the selected recipient in the transaction list
