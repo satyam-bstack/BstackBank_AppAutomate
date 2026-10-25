@@ -62,7 +62,7 @@ on:
 jobs:
   run-tests:
     name: Run ${{ inputs.scenario }} tests on ${{ inputs.platform }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
