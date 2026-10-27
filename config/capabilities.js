@@ -20,8 +20,8 @@ const bstackOptions = (buildSuffix, sessionName) => ({
 const capabilities = {
   android: {
     platformName: 'android',
-    'appium:deviceName': 'Samsung Galaxy S23',
-    'appium:platformVersion': '13.0',
+    'appium:deviceName': 'Google Pixel 9',
+    'appium:platformVersion': '15.0',
     'appium:app': process.env.BS_APP_ID,
     'appium:automationName': 'UiAutomator2',
     'appium:noReset': true,
@@ -29,6 +29,9 @@ const capabilities = {
     'bstack:options': {
       ...bstackOptions('Android', 'BStackBank Android Test'),
       ...(process.env.ENABLE_BIOMETRIC === 'true' && { enableBiometric: true }),
+      // Camera image injection (QR scan + KYC liveness selfie; media URLs: config/test-data.js).
+      // Toggle with ENABLE_IMAGE_INJECTION=false (CI input `enable_image_injection`); defaults to on.
+      ...(process.env.ENABLE_IMAGE_INJECTION !== 'false' && { enableCameraImageInjection: true }),
     },
   },
 

@@ -53,6 +53,11 @@ on:
           - wcag21aaa
           - wcag22aa
           - wcag22aaa
+      enable_image_injection:
+        description: 'Enable camera image injection (QR scan, KYC liveness selfie)'
+        required: false
+        default: true
+        type: boolean
       enable_percy:
         description: 'Enable App Percy visual testing (one snapshot per unique app screen)'
         required: false
@@ -76,6 +81,20 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Verify injection media and KYC document are present
+        run: |
+          test -f "config/Resource/KYC Verification Document.pdf" || { echo "::error::KYC document missing from repo"; exit 1; }
+          test -f config/Resource/image.png || { echo "::error::selfie image missing from repo"; exit 1; }
+          if [ "${{ inputs.enable_image_injection }}" != "true" ]; then
+            echo "::warning::Image injection disabled - QR/liveness scenarios will not pass"
+          fi
+          if [ "${{ inputs.enable_biometric }}" != "true" ]; then
+            echo "::warning::Biometric disabled - the sign-up/KYC scenario sends a biometric PASS and needs enable_biometric=true"
+          fi
+          if [ -z "${{ secrets.SIGNUP_PASSWORD }}" ]; then
+            echo "::warning::SIGNUP_PASSWORD secret is not set - sign-up scenario will fail"
+          fi
 
       - name: Set tag expression and build tags
         id: tag
@@ -110,6 +129,11 @@ jobs:
           BS_APP_ID: ${{ secrets.BS_APP_ID }}
           PLATFORM: ${{ inputs.platform }}
           ENABLE_BIOMETRIC: ${{ inputs.enable_biometric }}
+          ENABLE_IMAGE_INJECTION: ${{ inputs.enable_image_injection }}
+          # Media uploaded to BrowserStack (media://...); expires after 30 days. Falls back to config/test-data.js
+          SELFIE_MEDIA_URL: ${{ vars.SELFIE_MEDIA_URL }}
+          QR_MEDIA_URL: ${{ vars.QR_MEDIA_URL }}
+          SIGNUP_PASSWORD: ${{ secrets.SIGNUP_PASSWORD }}
           ENABLE_NETWORK_LOGS: ${{ inputs.enable_network_logs }}
           ENABLE_DEVICE_LOGS: ${{ inputs.enable_device_logs }}
           ENABLE_ACCESSIBILITY: ${{ inputs.enable_accessibility }}
